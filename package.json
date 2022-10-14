@@ -1,0 +1,81 @@
+{
+  "name": "@wefa/chain",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "config": {
+    "solidity": {
+      "version": "0.8.17"
+    },
+    "paths": {
+      "contracts": "./contracts",
+      "tests": "./test",
+      "cache": "./cache",
+      "build": {
+        "contracts": "./build/contracts",
+        "typechain": "./build/typechain"
+      }
+    }
+  },
+  "scripts": {
+    "chain": "hardhat node --network hardhat",
+    "compile": "hardhat compile",
+    "deploy": "hardhat deploy",
+    "test": "hardhat test",
+    "test:report-gas": "REPORT_GAS=true hardhat test",
+    "test:coverage": "hardhat coverage",
+    "typechain": "hardhat typechain",
+    "lint": "yarn lint:sol && yarn lint:ts",
+    "lint:ts": "eslint . --ext .js,.jsx,.ts,.tsx --ignore-path .gitignore",
+    "lint:sol": "solhint 'contracts/**/*.sol'",
+    "precommit": "lint-staged"
+  },
+  "devDependencies": {
+    "@appliedzkp/semaphore-contracts": "^0.10.0",
+    "@eth-optimism/hardhat-ovm": "^0.2.4",
+    "@nomicfoundation/hardhat-toolbox": "^2.0.0",
+    "@openzeppelin/contracts-upgradeable": "^4.7.3",
+    "@typechain/ethers-v5": "^10.1.0",
+    "@typechain/hardhat": "^6.1.3",
+    "@typescript-eslint/eslint-plugin": "^5.37.0",
+    "@zk-kit/identity": "^1.4.1",
+    "@zk-kit/incremental-merkle-tree": "^0.4.3",
+    "@zk-kit/protocols": "^1.11.1",
+    "@typescript-eslint/parser": "^5.37.0",
+    "dotenv": "^16.0.2",
+    "eslint": "^8.23.1",
+    "eslint-config-prettier": "^8.5.0",
+    "hardhat": "^2.11.2",
+    "hardhat-deploy": "^0.11.13",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.24",
+    "solhint": "^3.3.7",
+    "solhint-plugin-prettier": "^0.0.5",
+    "solidity-coverage": "^0.8.2",
+    "typechain": "^8.1.0",
+    "typescript": "^4.8.2"
+  },
+  "prettier": {
+    "semi": false,
+    "arrowParens": "always",
+    "trailingComma": "none",
+    "printWidth": 120
+  },
+  "eslintConfig": {
+    "env": {
+      "es6": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "prettier"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {},
+    "plugins": [
+      "@typescript-eslint"
+    ]
+  }
+}
