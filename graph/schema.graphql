@@ -1,0 +1,18 @@
+type User @entity {
+    id: ID!
+    username: String!
+    status: String!
+    joinedOn: Date
+    avatar: String
+    location: String
+    depth: Int!
+    root: BigInt!
+}
+
+type Device @entity {
+    id: ID!
+    provider: String!
+    name: String!
+    depth: Int!
+    root: BigInt!
+}

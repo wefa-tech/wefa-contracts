@@ -1,0 +1,26 @@
+specVersion: 0.0.4
+description: A system that allows DApps or services to verify users' reputation without exposing their identities.
+repository: https://github.com/interep-project/subgraph
+schema:
+    file: ./schema.graphql
+dataSources:
+    - kind: ethereum/contract
+      name: Interep
+      network: {{network}}
+      source:
+          address: "{{address}}"
+          abi: Interep
+          startBlock: {{startBlock}}
+      mapping:
+          kind: ethereum/events
+          apiVersion: 0.0.5
+          language: wasm/assemblyscript
+          entities:
+              - Group
+          abis:
+              - name: Interep
+                file: ./abis/Interep.json
+          eventHandlers:
+              - event: GroupUpdated(uint256,indexed bytes32,indexed bytes32,uint256,indexed uint8)
+                handler: updateGroup
+          file: ./src/mapping.ts
