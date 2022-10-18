@@ -1,6 +1,5 @@
 import { NetworksUserConfig } from "hardhat/types"
 import { HardhatUserConfig } from "hardhat/config"
-import { config as dotenvConfig } from "dotenv"
 import { resolve } from "path"
 
 import { config } from "./package.json"
@@ -8,7 +7,8 @@ import { config } from "./package.json"
 import "@nomicfoundation/hardhat-toolbox"
 import "solidity-coverage"
 
-dotenvConfig({ path: resolve(__dirname, "./.env") })
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require("dotenv").config({ path: resolve(__dirname, "/.env") })
 
 function getNetworks(): NetworksUserConfig | undefined {
   if (process.env.INFURA_API_KEY && process.env.BACKEND_PRIVATE_KEY) {

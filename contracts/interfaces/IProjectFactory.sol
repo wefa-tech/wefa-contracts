@@ -64,16 +64,6 @@ interface IProjectFactory {
   /// @param name: Name of the porject set when created and can be updated.
   event DeactivatedProject(address user, address project, string name);
 
-  /// @dev External function that allows a user to submit a project proposal
-  /// @param _name: Name of the porject set when created and can be updated.
-  /// @param _mission: The stated mission of the project set when created.
-  /// @param _metadata: CID url for metadata for projects stored in IPFS.
-  function submitProjectProposal(
-    string calldata _name,
-    string calldata _mission,
-    string calldata _metadata
-  ) external;
-
   /// @dev External function to create a project.
   /// @param _status: Status of project.
   /// @param _name: Name of the porject set when created and can be updated.

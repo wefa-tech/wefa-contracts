@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155SupplyUpgradeable.sol";
+import "../node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "../node_modules/@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "../node_modules/@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
+import "../node_modules/@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155SupplyUpgradeable.sol";
 
 import "./interfaces/IProject.sol";
 
@@ -22,21 +22,20 @@ contract Project is IProject, Initializable, ERC1155Upgradeable, ERC1155SupplyUp
   // INFO
   Details public details;
   Settings private settings;
-
-  // SPACE
-  // This data is kept consistent by using ZKPs to create the CID urls
-  // Ensuring they can be veirifed by the contract when updated
   Location private location;
-  Component[] private components;
-  Milestone[] private milestones; // Upon completion the rewards are distrbuted to members of the project.
-  Device[] private devices; // 
-  Donation[] private donations;
-  Tool[] private tools;
 
   // COMMUNITY
   mapping(address => Teammate) private team;
   mapping(address => Contributor) private contributors;
   mapping(address => Patron) private patrons;
+
+  // SPACE
+  // This data is kept consistent by using ZKPs to create the CID urls
+  // Ensuring they can be veirifed by the contract when updated
+  Feature[] private features;
+  Milestone[] private milestones; // Upon completion the rewards are distrbuted to members of the project.
+  Donation[] private donations;
+  Tool[] private tools;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() {
@@ -87,25 +86,17 @@ contract Project is IProject, Initializable, ERC1155Upgradeable, ERC1155SupplyUp
     return super.supportsInterface(interfaceId);
   }
 
-  function addTeammate(uint256 _name, uint256 _dna) external {}
+  function updateCore(uint256 _name, uint256 _dna) external {}
 
-  function removeTeammate(uint256 _name, uint256 _dna) external {}
+  function updateDetails(uint256 _name, uint256 _dna) external {}
 
-  function addContributor(uint256 _name, uint256 _dna) external {}
+  function updateSettings(uint256 _name, uint256 _dna) external {}
 
-  function removeContributor(uint256 _name, uint256 _dna) external {}
+  function updateLocation(uint256 _name, uint256 _dna) external {}
 
-  function addPatron(uint256 _name, uint256 _dna) external {}
+  function addMember(uint256 _name, uint256 _dna) external {}
 
-  function removePatron(uint256 _name, uint256 _dna) external {}
+  function removeMember(uint256 _name, uint256 _dna) external {}
 
-  function updateProjectRules(uint256 _name, uint256 _dna) external {}
-
-  function updateProjectCore(uint256 _name, uint256 _dna) external {}
-
-  function updateProjectInfo(uint256 _name, uint256 _dna) external {}
-
-  function updateProjectSpace(uint256 _name, uint256 _dna) external {}
-
-  function updateProjectCommunity(uint256 _name, uint256 _dna) external {}
+  function deactivate() external {}
 }
