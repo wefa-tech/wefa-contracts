@@ -10,33 +10,33 @@ import "../node_modules/@openzeppelin/contracts-upgradeable/token/ERC1155/extens
 import "./interfaces/IProject.sol";
 
 contract Project is IProject, Initializable, ERC1155Upgradeable, ERC1155SupplyUpgradeable, AccessControlUpgradeable {
-  bytes32 public constant TEAM_LEADER_ROLE = keccak256("TEAM_LEADER_ROLE");
-  bytes32 public constant TEAM_MEMBER_ROLE = keccak256("TEAM_MEMBER_ROLE");
-  bytes32 public constant CONTRIBUTOR_ROLE = keccak256("CONTRIBUTOR_ROLE");
-  bytes32 public constant PATRON_ROLE = keccak256("PATRON_ROLE");
-
-  // CORE
+  // CORE - TYPES
   Status public status;
   Core private core;
 
-  // INFO
+  // INFO - TYPES
   Details public details;
   Settings private settings;
   Location private location;
 
-  // COMMUNITY
+  // COMMUNITY - TYPES
+  bytes32 public constant TEAM_LEADER_ROLE = keccak256("TEAM_LEADER_ROLE");
+  bytes32 public constant TEAM_MEMBER_ROLE = keccak256("TEAM_MEMBER_ROLE");
+  bytes32 public constant CONTRIBUTOR_ROLE = keccak256("CONTRIBUTOR_ROLE");
+  bytes32 public constant PATRON_ROLE = keccak256("PATRON_ROLE");
   mapping(address => Teammate) private team;
   mapping(address => Contributor) private contributors;
   mapping(address => Patron) private patrons;
 
-  // SPACE
-  // This data is kept consistent by using ZKPs to create the CID urls
-  // Ensuring they can be veirifed by the contract when updated
+  // SPACE - TYPES
   Feature[] private features;
   Milestone[] private milestones; // Upon completion the rewards are distrbuted to members of the project.
-  Donation[] private donations;
   Tool[] private tools;
+  Donation[] private donations;
+  mapping(uint256 => bool) private featureExists;
+  mapping(uint256 => bool) private toolExists;
 
+  // INITIALIZATION - FUNCTIONS
   /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() {
     _disableInitializers();
@@ -60,12 +60,7 @@ contract Project is IProject, Initializable, ERC1155Upgradeable, ERC1155SupplyUp
     _grantRole(TEAM_LEADER_ROLE, _owner);
   }
 
-  function setURI(string memory newuri) public onlyRole(TEAM_MEMBER_ROLE) {
-    _setURI(newuri);
-  }
-
-  // The following functions are overrides required by Solidity.
-
+  // OVERRIDE - FUNCTIONS
   function _beforeTokenTransfer(
     address operator,
     address from,
@@ -86,17 +81,103 @@ contract Project is IProject, Initializable, ERC1155Upgradeable, ERC1155SupplyUp
     return super.supportsInterface(interfaceId);
   }
 
-  function updateCore(uint256 _name, uint256 _dna) external {}
+  // CORE - FUNCTIONS
+  function updateCore(Element[] calldata _elements, Action[] calldata _actions) external {
+    for (uint256 i = 0; i < 5; i++) {
+      if (i < 4) {
+        Element element = _elements[i];
+        core.elements[i] = element;
+      }
+      Action action = _actions[i];
+      core.actions[i] = action;
+    }
 
-  function updateDetails(uint256 _name, uint256 _dna) external {}
+    // emit UpdatedCore(core.elements, core.actions);
+  }
 
-  function updateSettings(uint256 _name, uint256 _dna) external {}
+  // INFO - FUNCTIONS
+  function updateDetails(
+    string calldata _name,
+    string calldata _mission,
+    string calldata _metadata
+  ) external {
+    if (bytes(_name).length > 0) {
+      details.name = _name;
+    }
+    if (bytes(_mission).length > 0) {
+      details.name = _mission;
+    }
+    if (bytes(_metadata).length > 0) {
+      details.name = _metadata;
+    }
+  }
 
-  function updateLocation(uint256 _name, uint256 _dna) external {}
+  function updateSettings(Settings calldata _settings) external {
+    if (_settings.privacy > 0) {
+      settings.privacy = _settings.privacy;
+    }
+  }
 
-  function addMember(uint256 _name, uint256 _dna) external {}
+  function updateLocation(Location calldata _location) external {}
 
-  function removeMember(uint256 _name, uint256 _dna) external {}
+  // COMMUNITY - FUNCTIONS
+  function addMember(
+    address _user,
+    MemberRole _role,
+    MemberStatus _status
+  ) external {
+    if (_role == MemberRole.TEAMMATE) {
+      assert(team[_user].createdAt == 0);
+      team[_user] = Teammate(_status, block.timestamp, block.timestamp, 0, false);
+    } else if (_role == MemberRole.TEAMMATE) {
+      assert(contributors[_user].createdAt == 0);
+      // contributors[_user] = Contributor(_status, block.timestamp, block.timestamp, block.timestamp, 0, 0, 0);
+    } else {
+      assert(patrons[_user].createdAt == 0);
+      // patrons[_user] = Patron(_status, block.timestamp, block.timestamp, block.timestamp, 1, 0, 0);
+    }
+  }
+
+  function updateTeammate(
+    address _user,
+    MemberStatus _status,
+    bool _leader
+  ) external {}
+
+  function updateContributor(
+    address _user,
+    MemberStatus _status,
+    uint256 _verifyCycle,
+    uint256 _verifiers
+  ) external {}
+
+  function updatePatron(
+    address _user,
+    MemberStatus _status,
+    uint256 _verifyCycle,
+    uint256 _verifiers
+  ) external {}
+
+  function removeMember(address _user, MemberRole _role) external {}
+
+  // SPACE - FUNCTIONS
+  function addFeature(uint256 _work, WorkAction _action) external {}
+
+  function updateFeature(uint256 _work, WorkAction _action) external {}
+
+  function addMilestone(uint256 _work, WorkAction _action) external {}
+
+  function updateMilestone(uint256 _work, WorkAction _action) external {}
+
+  function contributeTools(Tool[] calldata _tools) external {}
+
+  function updateTools(Tool[] calldata _tools) external {}
+
+  function contributeWork(uint256 _work, WorkAction _action) external {}
+
+  function completeWork(uint256 _work) external {}
+
+  function donate(Donation calldata _donation) external {}
 
   function deactivate() external {}
 }
