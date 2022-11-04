@@ -5,6 +5,8 @@ import { resolve } from "path"
 import { config } from "./package.json"
 
 import "@nomicfoundation/hardhat-toolbox"
+import "@matterlabs/hardhat-zksync-deploy"
+import "@matterlabs/hardhat-zksync-solc"
 import "solidity-coverage"
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -16,40 +18,41 @@ function getNetworks(): NetworksUserConfig | undefined {
     const accounts = [`0x${process.env.BACKEND_PRIVATE_KEY}`]
 
     return {
-      goerli: {
-        url: `https://goerli.infura.io/v3/${infuraApiKey}`,
-        chainId: 5,
-        accounts
-      },
       optimism_goerli: {
         url: `https://optimism-goerli.infura.io/v3/${infuraApiKey}`,
         chainId: 420,
-        accounts
+        accounts,
+        zksync: false
       },
       arbitrum_goerli: {
         url: `https://arbitrum-goerli.infura.io/v3/${infuraApiKey}`,
         chainId: 421613,
-        accounts
+        accounts,
+        zksync: false
       },
-      arbitrum: {
-        url: `https://arbitrum-mainnet.infura.io/v3/${infuraApiKey}`,
-        chainId: 42161,
-        accounts
+      goerli: {
+        url: `https://goerli.infura.io/v3/${infuraApiKey}`,
+        chainId: 5,
+        accounts,
+        zksync: false
       },
       optimism: {
         url: `https://optimism-mainnet.infura.io/v3/827${infuraApiKey}`,
         chainId: 10,
-        accounts
+        accounts,
+        zksync: false
       },
-      // starknet: {
-      //   url: `https://starknet-mainnet.infura.io/v3/${infuraApiKey}`,
-      //   chainId: 5,
-      //   accounts
-      // },
+      arbitrum: {
+        url: `https://arbitrum-mainnet.infura.io/v3/${infuraApiKey}`,
+        chainId: 42161,
+        accounts,
+        zksync: false
+      },
       mainnet: {
         url: `https://mainnet.infura.io/v3/${infuraApiKey}`,
         chainId: 1,
-        accounts
+        accounts,
+        zksync: false
       }
     }
   }
@@ -66,9 +69,27 @@ const hardhatConfig: HardhatUserConfig = {
   networks: {
     hardhat: {
       chainId: 1337,
-      allowUnlimitedContractSize: true
+      allowUnlimitedContractSize: true,
+      zksync: true
     },
     ...getNetworks()
+  },
+  zksolc: {
+    version: "1.2.0",
+    compilerSource: "docker",
+    settings: {
+      optimizer: {
+        enabled: true
+      },
+      experimental: {
+        dockerImage: "matterlabs/zksolc",
+        tag: "v1.2.0"
+      }
+    }
+  },
+  zkSyncDeploy: {
+    zkSyncNetwork: "https://zksync2-testnet.zksync.dev",
+    ethNetwork: "goerli" // Can also be the RPC URL of the network (e.g. `https://goerli.infura.io/v3/<API_KEY>`)
   },
   gasReporter: {
     currency: "USD",
