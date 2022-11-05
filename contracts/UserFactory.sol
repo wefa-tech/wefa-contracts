@@ -6,16 +6,13 @@ import "../node_modules/@openzeppelin/contracts-upgradeable/security/PausableUpg
 import "../node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "./interfaces/IUserFactory.sol";
-import "./interfaces/IUser.sol";
+import "./User.sol";
 
 contract UserFactory is IUserFactory, Initializable, PausableUpgradeable, AccessControlUpgradeable {
   bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
-
   uint256 public version;
-  uint256 public userCount;
   FactoryStatus public status;
-
-  mapping(address => UserDetails) public users;
+  address[] public users;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() {
@@ -25,7 +22,6 @@ contract UserFactory is IUserFactory, Initializable, PausableUpgradeable, Access
   function initialize() public initializer {
     __Pausable_init();
     __AccessControl_init();
-
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     _grantRole(PAUSER_ROLE, msg.sender);
   }
@@ -38,40 +34,22 @@ contract UserFactory is IUserFactory, Initializable, PausableUpgradeable, Access
     _unpause();
   }
 
-  function submitUserProposal(
-    string calldata _name,
-    string calldata _mission,
-    string calldata _metadata
-  ) external {
-    // users.push(User(_name, _dna, 1, uint32(block.timestamp + cooldownTime), 0, 0));
-    // emit UpdatedUser(id, _name, _dna);
+  function createUser(string memory _username, string memory _metadata) external whenNotPaused {
+    User user = new User();
+    user.initialize(msg.sender, _username, _metadata);
+    users.push(address(user));
+    emit UserCreated(address(user), _username, _metadata);
   }
 
-  function createUser(
-    UserStatus _status,
-    string memory _name,
-    string memory _mission,
-    string memory _metadata
-  ) external {
-    // users.push(UserInfo(_name, _mission, _status));
-
-    // userToOwner[msg.sender] = msg.sender;
-    // emit CreatedUser(msg.sender, _name, _mission, _status, _metadata);
+  function activateUser(address _address) external onlyRole(PAUSER_ROLE) {
+    User user = User(_address);
+    user.unpause();
+    emit UserActivated(_address, user.username(), user.metadata());
   }
 
-  function updateUser(
-    address _user,
-    uint8 _status,
-    string calldata _name,
-    string calldata _mission,
-    string calldata _metadata
-  ) external {
-    // users.push(User(_name, _dna, 1, uint32(block.timestamp + cooldownTime), 0, 0));
-    // emit UpdatedUser(id, _name, _dna);
-  }
-
-  function deactivateUser(address _address) external {
-    // users.push(User(_name, _dna, 1, uint32(block.timestamp + cooldownTime), 0, 0));
-    // emit DeletedUser(id, _name, _dna);
+  function deactivateUser(address _address) external onlyRole(PAUSER_ROLE) {
+    User user = User(_address);
+    user.pause();
+    emit UserDeactivated(_address, user.username(), user.metadata());
   }
 }

@@ -7,7 +7,8 @@ interface IProject {
   // CORE - ENUMS & STRUCTS
   enum Status {
     ACTIVE,
-    INACTIVE
+    INACTIVE,
+    DEACTIVATED
   }
 
   // Elements WEFA is based on and derived from the categories picked
@@ -112,11 +113,6 @@ interface IProject {
     INACTIVE
   }
 
-  enum DonationStatus {
-    ACTIVE,
-    INACTIVE
-  }
-
   enum ToolStatus {
     ACTIVE,
     INACTIVE
@@ -153,12 +149,11 @@ interface IProject {
   }
 
   struct Donation {
-    DonationStatus status;
     string metadata; // Ceramic/IPFS CID Url
     uint256 createdAt;
-    uint256 updatedAt;
     uint256 amount;
-    uint256 tokenid; // ID of token stored in project contraact
+    string symbol; // ID of token stored in project contraact
+    uint256 tokenId; // ID of token stored in project contraact
     address donor;
   }
 
@@ -169,7 +164,7 @@ interface IProject {
     uint256 updatedAt;
     uint256 dueAt;
     uint256 returnedAt;
-    address user;
+    address owner;
     address provider;
   }
 
@@ -247,15 +242,9 @@ interface IProject {
 
   /// @dev Emitted when a donation is added to the project.
   /// @param project: Address of the project.
-  /// @param name: Name of donation.
-  /// @param id: ID of donation added.
-  /// @param metadata: extra data stored in IPFS via ceramic.
-  event DonationAdded(address project, string name, uint256 id, string metadata);
-
-  /// @dev Emitted when a milestone is added to the project.
-  /// @param project: Address of the project.
-  /// @param donation: Donation details.
-  event DonationUpdated(address project, Donation donation);
+  /// @param patron: Patron of donation.
+  /// @param donation: Donation added.
+  event DonationAdded(address project, Patron patron, Donation donation);
 
   /// @dev Emitted when a feature is added to the project.
   /// @param project: Address of the project.
@@ -367,7 +356,7 @@ interface IProject {
   /// @param _action: root of tree
   function updateFeature(uint256 _work, WorkAction _action) external;
 
-  /// @dev Function 
+  /// @dev Function
   /// @param _work: root of tree
   /// @param _action: root of tree
   function addMilestone(uint256 _work, WorkAction _action) external;
@@ -385,19 +374,28 @@ interface IProject {
   /// @param _tools: root of tree
   function updateTools(Tool[] calldata _tools) external;
 
-  /// @dev Function to contribute work to the project.
+  /// @dev Function to increase work contribution to the project.
   /// @param _work: root of tree
-  /// @param _action: root of tree
-  function contributeWork(uint256 _work, WorkAction _action) external;
+  function increaseWork(uint32 _work) external;
+
+  /// @dev Function to decrease work contribution to the project.
+  /// @param _user: Address of user.
+  /// @param _work: root of tree
+  function decreaseWork(address _user, uint32 _work) external;
 
   /// @dev Function to complete work by a contributor.
+  /// @param _user: Address of user.
   /// @param _work: root of tree
-  function completeWork(uint256 _work) external;
+  function completeWork(address _user, uint32 _work) external;
 
   /// @dev Function to add a donation to the project.
-  /// @param _donation: root of tree
-  function donate(Donation calldata _donation) external;
+  /// @param _patron: Address of patron donating.
+  /// @param _donation: Donation being given.
+  function donate(address _patron, Donation calldata _donation) external payable;
 
-  /// @dev External function allowing team members to update a project
+  /// @dev External function allowing team members to activate the project.
+  function activate() external;
+
+  /// @dev External function allowing team members to deactivate the project.
   function deactivate() external;
 }

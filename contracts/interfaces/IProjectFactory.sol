@@ -18,14 +18,6 @@ interface IProjectFactory {
     COMPLETED
   }
 
-  struct ProjectDetails {
-    address owner;
-    ProjectStatus status;
-    string name;
-    string mission;
-    string metadata;
-  }
-
   /// @dev Emitted when a Project is created.
   /// @param user: Address of the user.
   /// @param project: Address of the project.
@@ -34,22 +26,6 @@ interface IProjectFactory {
   /// @param status: Status of project.
   /// @param metadata: CID url for metadata for projects stored in IPFS.
   event CreatedProject(
-    address user,
-    address project,
-    string name,
-    string mission,
-    ProjectStatus status,
-    string metadata
-  );
-
-  /// @dev Emitted when a Project is updated.
-  /// @param user: Address of the user.
-  /// @param project: Address of the project.
-  /// @param name: Name of the porject set when created and can be updated.
-  /// @param mission: The stated mission of the project set when created.
-  /// @param status: Status of project.
-  /// @param metadata: CID url for metadata for projects stored in IPFS.
-  event UpdatedProject(
     address user,
     address project,
     string name,
@@ -74,20 +50,6 @@ interface IProjectFactory {
     string memory _name,
     string memory _mission,
     string memory _metadata
-  ) external;
-
-  /// @dev External function allowing team members to update a project
-  /// @param _project: Address of the project.
-  /// @param _status: Status of project.
-  /// @param _name: Name of the porject set when created and can be updated.
-  /// @param _mission: The stated mission of the project set when created.
-  /// @param _metadata: CID url for metadata for projects stored in IPFS.
-  function updateProject(
-    address _project,
-    uint8 _status,
-    string calldata _name,
-    string calldata _mission,
-    string calldata _metadata
   ) external;
 
   /// @dev External function allowing team members to update a project

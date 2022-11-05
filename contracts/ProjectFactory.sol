@@ -6,7 +6,7 @@ import "../node_modules/@openzeppelin/contracts-upgradeable/security/PausableUpg
 import "../node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "./interfaces/IProjectFactory.sol";
-import "./interfaces/IProject.sol";
+import "./Project.sol";
 
 contract ProjectFactory is IProjectFactory, Initializable, PausableUpgradeable, AccessControlUpgradeable {
   bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
@@ -15,11 +15,9 @@ contract ProjectFactory is IProjectFactory, Initializable, PausableUpgradeable, 
   uint256 public projectCount;
   FactoryStatus public status;
 
-  ProjectDetails[] public projectProposals;
-  mapping(address => ProjectDetails) public projects;
-
-  mapping(address => uint256) private ownerProjectCount;
-  mapping(address => uint256[]) private ownerToProposals;
+  address[] public projects;
+  mapping(address => mapping(address => bool)) public ownerToProjectExists;
+  mapping(address => uint256) public ownerProjectCount;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() {
@@ -46,38 +44,14 @@ contract ProjectFactory is IProjectFactory, Initializable, PausableUpgradeable, 
     string calldata _name,
     string calldata _mission,
     string calldata _metadata
-  ) external {
-    // projects.push(Project(_name, _dna, 1, uint32(block.timestamp + cooldownTime), 0, 0));
-    // emit UpdatedProject(id, _name, _dna);
-  }
+  ) external {}
 
   function createProject(
     ProjectStatus _status,
     string memory _name,
     string memory _mission,
     string memory _metadata
-  ) external {
-    // projects.push(ProjectInfo(_name, _mission, _status));
+  ) external {}
 
-    // projectToOwner[msg.sender] = msg.sender;
-    ownerProjectCount[msg.sender] = ownerProjectCount[msg.sender] + 1;
-
-    // emit CreatedProject(msg.sender, _name, _mission, _status, _metadata);
-  }
-
-  function updateProject(
-    address _project,
-    uint8 _status,
-    string calldata _name,
-    string calldata _mission,
-    string calldata _metadata
-  ) external {
-    // projects.push(Project(_name, _dna, 1, uint32(block.timestamp + cooldownTime), 0, 0));
-    // emit UpdatedProject(id, _name, _dna);
-  }
-
-  function deactivateProject(address _address) external {
-    // projects.push(Project(_name, _dna, 1, uint32(block.timestamp + cooldownTime), 0, 0));
-    // emit DeletedProject(id, _name, _dna);
-  }
+  function deactivateProject(address _address) external {}
 }
